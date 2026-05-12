@@ -116,7 +116,10 @@ if __name__ == "__main__":
     text = TextProcessor()
     print(f"Trying to validate input '42': {text.validate(42)}")
     print("Processing data: ['Hello', 'Nexus', 'World']")
-    text.ingest(["Hello", "Nexus", "World"])
+    try:
+        text.ingest(["Hello", "Nexus", "World"])
+    except Exception as e:
+        print(f"Got exception: {e}")
     print("Extracting 1 values...")
     text_value = text.output()
     print(f"Text value {text_value[0]}: {text_value[1]}")
@@ -126,9 +129,12 @@ if __name__ == "__main__":
     print("Processing data: [{'log_level': 'NOTICE', 'log_message':" +
           "'Connection to server'}, {'log_level': 'ERROR', 'log_message':" +
           "'Unauthorized access!!'}]")
-    log.ingest([{'log_level': 'NOTICE', 'log_message': 'Connection to server'},
-                {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
-                ])
+    try:
+        log.ingest([{'log_level': 'NOTICE', 'log_message': 'Connection to server'},
+                    {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
+                    ])
+    except Exception as e:
+        print(f"Got exception: {e}")
     print("Extracting 2 values...")
     i = 0
     while i < 2:

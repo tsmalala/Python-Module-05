@@ -26,7 +26,7 @@ class DataProcessor(ABC):
         return (current_count, element)
 
 
-class DataStream():
+class DataStream:
     def __init__(self) -> None:
         self._processors: list[DataProcessor] = []
 
@@ -59,7 +59,7 @@ class DataStream():
             print(
                 f"{name}:"
                 f"total {element.total_processed} items processed,"
-                f"remaining {len(self._processors)} on processor"
+                f"remaining {len(element._data)} on processor"
             )
 
 
@@ -72,13 +72,14 @@ class NumericProcessor(DataProcessor):
         return False
 
     def ingest(self, data: Any) -> None:
-        self.total_processed += 1
         if self.validate(data):
             if isinstance(data, (int, float)):
                 self._data.append(str(data))
+                self.total_processed += 1
             else:
                 for item in data:
                     self._data.append(str(item))
+                    self.total_processed += 1
         else:
             raise ValueError("Improper numeric data")
 
@@ -92,13 +93,14 @@ class TextProcessor(DataProcessor):
         return False
 
     def ingest(self, data: Any) -> None:
-        self.total_processed += 1
         if self.validate(data):
             if isinstance(data, str):
                 self._data.append(data)
+                self.total_processed += 1
             else:
                 for item in data:
                     self._data.append(item)
+                    self.total_processed += 1
         else:
             raise ValueError("Improper text data")
 
@@ -120,15 +122,16 @@ class LogProcessor(DataProcessor):
         return False
 
     def ingest(self, data: Any) -> None:
-        self.total_processed += 1
         if self.validate(data):
             def d_format(d: dict[str, str]) -> str:
                 return f"{d.get('log_level')}: {d.get('log_message')}"
             if isinstance(data, dict):
                 self._data.append(d_format(data))
+                self.total_processed += 1
             else:
                 for dict_list in data:
                     self._data.append(d_format(dict_list))
+                    self.total_processed += 1
         else:
             raise ValueError("Improper log data")
     
@@ -138,8 +141,8 @@ if __name__ == "__main__":
     data = [
         "Hello world",
         [3.14, -1, 2.71],
-        [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead',
-          'log_level': 'INFO', 'log_message': 'User wil is connected'}],
+        [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
+          {'log_level': 'INFO', 'log_message': 'User wil is connected'}],
         42,
         ['Hi', 'five']
     ]
@@ -150,13 +153,30 @@ if __name__ == "__main__":
 
     print("\nRegistering Numeric Processor\n")
     num = NumericProcessor()
-    txt = TextProcessor()
-    log = LogProcessor()
 
     stream.register_processor(num)
-    stream.register_processor(txt)
-    stream.register_processor(log)
 
     print(f"Send first batch of data on stream: {data}")
     stream.process_stream(data)
-    # stream.print_processors_stats()
+    stream.print_processors_stats()
+
+    print("\nRegister other data processors")
+    print("Send the same batch again")
+    txt = TextProcessor()
+    log = LogProcessor()
+    stream.register_processor(txt)
+    stream.register_processor(log)
+    stream.process_stream(data)
+    stream.print_processors_stats()
+
+    print(f"\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    num.output()
+    num.output()
+    num.output()
+    
+    txt.output()
+    txt.output()
+
+    log.output()
+
+    stream.print_processors_stats()
