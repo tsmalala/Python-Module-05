@@ -30,10 +30,8 @@ class DataStream:
     def __init__(self) -> None:
         self._processors: list[DataProcessor] = []
 
-
     def register_processor(self, proc: DataProcessor) -> None:
         self._processors.append(proc)
-
 
     def process_stream(self, stream: list[Any]) -> None:
         for element in stream:
@@ -46,7 +44,6 @@ class DataStream:
             if not processed:
                 print(f"DataStream error - Can't process element in stream:"
                       f"{element}")
-
 
     def print_processors_stats(self) -> None:
         print("=== DataStream statistics ===")
@@ -114,9 +111,9 @@ class LogProcessor(DataProcessor):
             )
         elif isinstance(data, list):
             return all(
-                isinstance(item, dict) and 
-                all(isinstance(k, str) and isinstance(v, str) 
-                    for k, v in item.items()) 
+                isinstance(item, dict) and
+                all(isinstance(k, str) and isinstance(v, str)
+                    for k, v in item.items())
                 for item in data
             )
         return False
@@ -134,15 +131,17 @@ class LogProcessor(DataProcessor):
                     self.total_processed += 1
         else:
             raise ValueError("Improper log data")
-    
+
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Stream ===\n")
     data = [
         "Hello world",
         [3.14, -1, 2.71],
-        [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
-          {'log_level': 'INFO', 'log_message': 'User wil is connected'}],
+        [{'log_level': 'WARNING',
+          'log_message': 'Telnet access! Use ssh instead'},
+         {'log_level': 'INFO',
+         'log_message': 'User wil is connected'}],
         42,
         ['Hi', 'five']
     ]
@@ -169,11 +168,12 @@ if __name__ == "__main__":
     stream.process_stream(data)
     stream.print_processors_stats()
 
-    print(f"\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    print("\nConsume some elements from the data processors: Numeric 3,"
+          "Text 2, Log 1")
     num.output()
     num.output()
     num.output()
-    
+
     txt.output()
     txt.output()
 

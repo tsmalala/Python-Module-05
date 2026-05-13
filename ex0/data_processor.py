@@ -73,9 +73,9 @@ class LogProcessor(DataProcessor):
             )
         elif isinstance(data, list):
             return all(
-                isinstance(item, dict) and 
-                all(isinstance(k, str) and isinstance(v, str) 
-                    for k, v in item.items()) 
+                isinstance(item, dict) and
+                all(isinstance(k, str) and isinstance(v, str)
+                    for k, v in item.items())
                 for item in data
             )
         return False
@@ -130,8 +130,10 @@ if __name__ == "__main__":
           "'Connection to server'}, {'log_level': 'ERROR', 'log_message':" +
           "'Unauthorized access!!'}]")
     try:
-        log.ingest([{'log_level': 'NOTICE', 'log_message': 'Connection to server'},
-                    {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
+        log.ingest([{'log_level': 'NOTICE',
+                     'log_message': 'Connection to server'},
+                    {'log_level': 'ERROR',
+                     'log_message': 'Unauthorized access!!'}
                     ])
     except Exception as e:
         print(f"Got exception: {e}")
